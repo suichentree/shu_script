@@ -28,6 +28,19 @@ function jsonParse(str) {
     }
 }
 
+let jdVersion = '10.1.2'
+let iphoneVersion = [Math.ceil(Math.random()*2+12),Math.ceil(Math.random()*4)]
+//定义UA标识（浏览器标识）
+let UA = `jdapp;iPhone;${jdVersion};${Math.ceil(Math.random()*2+12)}.${Math.ceil(Math.random()*4)};${randomString(40)};network/wifi;model/iPhone12,1;addressid/0;appBuild/167802;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS ${iphoneVersion[0]}_${iphoneVersion[1]} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`
+//创建40位随机数
+function randomString(e) {
+    e = e || 32;
+    let t = "abcdef0123456789", a = t.length, n = "";
+    for (let i = 0; i < e; i++)
+        n += t.charAt(Math.floor(Math.random() * a));
+    return n
+}
+let UUID = UA.split(';') && UA.split(';')[4] || ''
 let message = ''
 !(async () => {
 
@@ -92,19 +105,7 @@ async function sign(){
     }
 }
 
-let jdVersion = '10.1.2'
-let iphoneVersion = [Math.ceil(Math.random()*2+12),Math.ceil(Math.random()*4)]
-//定义UA标识（浏览器标识）
-let UA = `jdapp;iPhone;${jdVersion};${Math.ceil(Math.random()*2+12)}.${Math.ceil(Math.random()*4)};${randomString(40)};network/wifi;model/iPhone12,1;addressid/0;appBuild/167802;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS ${iphoneVersion[0]}_${iphoneVersion[1]} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`
-//创建40位随机数
-function randomString(e) {
-    e = e || 32;
-    let t = "abcdef0123456789", a = t.length, n = "";
-    for (let i = 0; i < e; i++)
-        n += t.charAt(Math.floor(Math.random() * a));
-    return n
-}
-let UUID = UA.split(';') && UA.split(';')[4] || ''
+
 
 //创建http请求
 async function initGetRequest(type, body) {
