@@ -59,10 +59,12 @@ async function sign(){
                 $.get(requestInfo, (err, resp, data) => {
                     try {
                         //处理响应结果
-                        if (data['code'] === '0' && data['data']) {
-                            console.log(`签到成功\n`);
+                        let rdata = JSON.parse(data)
+                        if (rdata['code'] === '0' && rdata['data']) {
+                            //签到成功
+                            console.log(`${rdata['data']['continuityAward']['title']}\n`);
                         } else {
-                            console.log("响应code不为0,签到失败。请求响应结果data：\n",JSON.parse(data))
+                            console.log("响应code不为0,签到失败。请求响应结果data：\n",rdata)
                         }
                     } catch (e) {
                         console.log("执行http请求异常。e=",e)

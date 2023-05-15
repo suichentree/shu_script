@@ -143,7 +143,8 @@ async function todoTask(type,body){
                 $.get(requestInfo, (err, resp, data) => {
                     try {
                         //响应结果
-                        console.log("请求响应结果data：\n",JSON.parse(data))
+                        let rdata = JSON.parse(data)
+                        console.log("请求响应结果data：\n",rdata)
                     } catch (e) {
                         $.logErr(e, resp)
                     } finally {
