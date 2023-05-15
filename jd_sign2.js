@@ -1,55 +1,29 @@
-//京东签到
-const $ = new Env('京东签到');
+/**
+ * 该脚本用于京东签到
+ * 活动入口：京东APP首页-领京豆
+ * **/
+const $ = new Env('京东APP首页-领京豆');
 
 //导入推送通知功能模块
 const notify = $.isNode() ? require('./sendNotify') : '';
 
 //导入京东cookie数组
-const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-//对jdCookieNode数组进行遍历处理转换为cookiesArr
 let cookiesArr = [];
-if ($.isNode()) {
-    Object.keys(jdCookieNode).forEach((item) => {
-        cookiesArr.push(jdCookieNode[item])
-    })
-    if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
-} else {
-    cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
-}
-//json串解析
-function jsonParse(str) {
-    if (typeof str == "string") {
-        try {
-            return JSON.parse(str);
-        } catch (e) {
-            console.log(e);
-            return [];
-        }
-    }
-}
+cookiesArr = $.isNode() ? require('./jdCookie.js') : '';
 
-let jdVersion = '10.1.2'
-let iphoneVersion = [Math.ceil(Math.random()*2+12),Math.ceil(Math.random()*4)]
 //定义UA标识（浏览器标识）
-let UA = `jdapp;iPhone;${jdVersion};${Math.ceil(Math.random()*2+12)}.${Math.ceil(Math.random()*4)};${randomString(40)};network/wifi;model/iPhone12,1;addressid/0;appBuild/167802;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS ${iphoneVersion[0]}_${iphoneVersion[1]} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`
-//创建40位随机数
-function randomString(e) {
-    e = e || 32;
-    let t = "abcdef0123456789", a = t.length, n = "";
-    for (let i = 0; i < e; i++)
-        n += t.charAt(Math.floor(Math.random() * a));
-    return n
-}
+let UA = require('./USER_AGENTS');
 let UUID = UA.split(';') && UA.split(';')[4] || ''
+let clientVersion = UA.split(';')[2];
+
+
 let message = ''
 !(async () => {
-
-    //若cookiesArr数组中第一个元素都为空，则表示数组为空
     if (!cookiesArr[0]) {
         $.msg("【提示】cookiesArr数组为空，没有获取到京东cookie。请先填写京东cookie，再进行后续操作。")
         return
     }
-    //遍历cookiesArr数组
+    //遍历京东ck数组,依次执行签到
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             $.cookie = cookiesArr[i] + '';
@@ -57,6 +31,7 @@ let message = ''
             $.index = i + 1;
             $.bean = 0
             console.log(`\n*****开始【京东账号${$.index}】${$.UserName}****\n`);
+            //执行签到任务
             await sign()
             if($.bean > 0) message += `【京东账号${$.index}】获得${$.bean}京豆\n`
         }
@@ -67,7 +42,6 @@ let message = ''
             await notify.sendNotify(`${$.name}`, `${message}\n入口：APP首页-领京豆-升级赚京豆`);
         }
     }
-
 })().catch((e) => {
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
 }).finally(() => {
@@ -77,22 +51,23 @@ let message = ''
 
 //京东签到方法
 async function sign(){
-    let body = '';
-    let myRequest = '';
-    let type = '';
     try{
-        body = `{"fp":"-1","shshshfp":"-1","shshshfpa":"-1","referUrl":"-1","userAgent":"-1","jda":"-1","rnVersion":"3.9"}`;
-        type = 'signBeanAct'
-        myRequest = await initGetRequest(type,body)
-        //执行get请求
-        if (myRequest) {
+        let body = `{"fp":"-1","shshshfp":"-1","shshshfpa":"-1","referUrl":"-1","userAgent":"-1","jda":"-1","rnVersion":"3.9"}`;
+        let type = 'signBeanAct'
+        let requestInfo = await initGetRequest(type,body)
+        //执行http请求
+        if (requestInfo) {
             return new Promise(async resolve => {
-                $.get(myRequest, (err, resp, data) => {
+                $.get(requestInfo, (err, resp, data) => {
                     try {
                         //处理响应结果
-                        console.log("请求响应结果data：",data)
-                        console.log("请求响应结果data2：",JSON.parse(data))
+                        if (data['code'] === '0' && data['data']) {
+                            console.log(`签到成功\n`);
+                        } else {
+                            console.log("签到失败，请求响应结果data：\n",JSON.parse(data))
+                        }
                     } catch (e) {
+                        console.log("执行http请求异常。e=",e)
                         $.logErr(e, resp)
                     } finally {
                         resolve();
@@ -101,15 +76,13 @@ async function sign(){
             })
         }
     }catch (e) {
-        console.log("sign签到方法内部异常，e = ",e)
+        console.log("sign签到方法内部发生异常，e = ",e)
     }
 }
 
-
-
 //创建http请求
 async function initGetRequest(type, body) {
-    let url = `https://api.m.jd.com/client.action?functionId=${type}&body=${body}&appid=ld&client=apple&clientVersion=${jdVersion}&networkType=wifi&osVersion=${iphoneVersion[0]}.${iphoneVersion[1]}&uuid=${UUID}&openudid=${UUID}`;
+    let url = `https://api.m.jd.com/client.action?functionId=${type}&body=${body}&appid=ld&client=apple&clientVersion=${clientVersion}&networkType=wifi&uuid=${UUID}&openudid=${UUID}`;
     const method = `GET`;
     const headers = {
         "Accept": "*/*",
