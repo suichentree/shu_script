@@ -2,7 +2,7 @@
  * 该脚本用于京东签到
  * 活动入口：京东APP首页-领京豆
  * **/
-const $ = new Env('京东APP首页-领京豆');
+const $ = new Env('京东签到');
 
 //导入推送通知功能模块
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -63,7 +63,7 @@ async function sign(){
                         if (data['code'] === '0' && data['data']) {
                             console.log(`签到成功\n`);
                         } else {
-                            console.log("签到失败，请求响应结果data：\n",JSON.parse(data))
+                            console.log("响应code不为0,签到失败。请求响应结果data：\n",JSON.parse(data))
                         }
                     } catch (e) {
                         console.log("执行http请求异常。e=",e)

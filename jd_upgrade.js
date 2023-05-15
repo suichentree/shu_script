@@ -3,7 +3,7 @@
  * 活动入口：京东APP首页-领京豆-升级赚京豆
  *
  * **/
-const $ = new Env('京东APP首页-领京豆-升级赚京豆');
+const $ = new Env('升级赚京豆');
 
 //导入推送通知功能模块
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -13,11 +13,7 @@ let {cookiesArr} = require('./jdCookie.js');
 
 //定义UA标识（浏览器标识）
 let {USER_AGENT} = require('./USER_AGENTS.js');
-console.log("USER_AGENT",USER_AGENT)
 let UUID = USER_AGENT.split(';') && USER_AGENT.split(';')[4] || ''
-console.log("UUID",UUID)
-
-
 let clientVersion = USER_AGENT.split(';')[2];
 
 let message = ''
@@ -115,12 +111,13 @@ async function getTaskList(){
                 $.get(requestInfo, (err, resp, data) => {
                     try {
                         //处理响应结果
-                        console.log("请求响应结果data：\n",JSON.parse(data))
-                        let rdata = JSON.parse(res);
+                        let rdata = JSON.parse(data);
                         //若响应成功
                         if (rdata.data && rdata.code == 0) {
                             console.log(`你当前等级为:${rdata.data.curLevel || 0},下一级可领取:${rdata.data.nextLevelBeanNum || 0}京豆`)
                             $.taskInfos = rdata.data.taskInfos && rdata.data.taskInfos || [];
+                        }else{
+                            console.log("响应code不为0，查询到任务列表失败。请求响应结果data：\n",rdata)
                         }
                     } catch (e) {
                         $.logErr(e, resp)
