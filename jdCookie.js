@@ -58,7 +58,7 @@ function jsonParse(str) {
 }
 
 module.exports = {
-  cookiesArr,
+  cookiesArr
 }
 
 

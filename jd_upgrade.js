@@ -9,12 +9,15 @@ const $ = new Env('京东APP首页-领京豆-升级赚京豆');
 const notify = $.isNode() ? require('./sendNotify') : '';
 
 //导入京东cookie数组
-let cookiesArr = [];
-cookiesArr = $.isNode() ? require('./jdCookie.js') : '';
+let {cookiesArr} = require('./jdCookie.js');
 
 //定义UA标识（浏览器标识）
-let {USER_AGENT} = require('./USER_AGENTS');
+let {USER_AGENT} = require('./USER_AGENTS.js');
+console.log("USER_AGENT",USER_AGENT)
 let UUID = USER_AGENT.split(';') && USER_AGENT.split(';')[4] || ''
+console.log("UUID",UUID)
+
+
 let clientVersion = USER_AGENT.split(';')[2];
 
 let message = ''
