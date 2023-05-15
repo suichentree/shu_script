@@ -8,8 +8,7 @@ const $ = new Env('京东签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 
 //导入京东cookie数组
-let cookiesArr = [];
-cookiesArr = $.isNode() ? require('./jdCookie.js') : '';
+let {cookiesArr} = require('./jdCookie.js');
 
 //定义UA标识（浏览器标识）
 let {USER_AGENT} = require('./USER_AGENTS');
