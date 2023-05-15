@@ -13,9 +13,9 @@ let cookiesArr = [];
 cookiesArr = $.isNode() ? require('./jdCookie.js') : '';
 
 //定义UA标识（浏览器标识）
-let UA = require('./USER_AGENTS');
-let UUID = UA.split(';') && UA.split(';')[4] || ''
-let clientVersion = UA.split(';')[2];
+let {USER_AGENT} = require('./USER_AGENTS');
+let UUID = USER_AGENT.split(';') && USER_AGENT.split(';')[4] || ''
+let clientVersion = USER_AGENT.split(';')[2];
 
 let message = ''
 !(async () => {
@@ -167,7 +167,7 @@ async function initGetRequest(type, body) {
         "Accept-Language": "zh-cn",
         'Cookie': $.cookie,
         "Referer": "https://h5.m.jd.com/",
-        "User-Agent": UA,
+        "User-Agent": USER_AGENT,
     };
     return {url: url, method: method, headers: headers};
 }
