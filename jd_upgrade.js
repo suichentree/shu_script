@@ -60,7 +60,7 @@ async function main_run(){
         await getTaskList()
         if($.taskInfos.length === 0){
             console.log("获取的任务列表为空,请先获取任务列表后再执行任务")
-            return
+            process.exit(0);
         }
         //遍历任务列表
         for(let i =0;i<$.taskInfos.length;i++){
@@ -118,6 +118,7 @@ async function getTaskList(){
                             $.taskInfos = rdata.data.taskInfos && rdata.data.taskInfos || [];
                         }else{
                             console.log("响应code不为0，查询到任务列表失败。请求响应结果data：\n",rdata)
+                            process.exit(0);
                         }
                     } catch (e) {
                         $.logErr(e, resp)
