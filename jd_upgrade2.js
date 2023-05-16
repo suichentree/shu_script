@@ -202,7 +202,7 @@ async function dealReturn(type, res) {
     }
 }
 async function getGetRequest(type, body) {
-    let url = `https://api.m.jd.com/client.action?functionId=${type}&body=${body}&appid=ld&client=apple&clientVersion=${clientVersion}&networkType=wifi&osVersion=${iphoneVersion[0]}.${iphoneVersion[1]}&uuid=${UUID}&openudid=${UUID}`;
+    let url = `https://api.m.jd.com/client.action?functionId=${type}&body=${body}&appid=ld&client=apple&clientVersion=${clientVersion}&networkType=wifi&uuid=${UUID}&openudid=${UUID}`;
     const method = `GET`;
     const headers = {
         "Accept": "*/*",
