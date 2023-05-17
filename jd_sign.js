@@ -61,8 +61,8 @@ async function sign(){
                         //处理响应结果
                         let rdata = JSON.parse(data)
                         if (rdata['code'] === '0' && rdata['data']) {
-                            //签到成功
-                            console.log(`${rdata['data']['continuityAward']['title']}\n`);
+                            //签到请求成功
+                            console.log(`${rdata['data']['dailyAward']['title']}\n`);
                         } else {
                             console.log("响应code不为0,签到失败。请求响应结果data：\n",rdata)
                         }
