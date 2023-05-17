@@ -61,7 +61,7 @@ async function sign(){
             "Referer": "https://h5.m.jd.com/",
             "User-Agent": USER_AGENT,
         }
-        //调签到接口
+        //请求签到接口
         let rdata = await runHttpRequest(url,"GET",headers)
         if (rdata['code'] === '0' && rdata['data']) {
             //签到请求成功
@@ -79,18 +79,19 @@ async function runHttpRequest(url,method,headers) {
     //拼装http请求
     let requestInfo = {url: url, method: method, headers: headers};
     //执行http请求
+    let rdata = ""
     if (requestInfo) {
         return new Promise(async resolve => {
             $.get(requestInfo, (err, resp, data) => {
                 try {
-                    //json解析响应数据并返回数据
-                    let rdata = JSON.parse(data)
-                    return rdata
+                    //json解析响应数据
+                    rdata = JSON.parse(data)
                 } catch (e) {
                     console.log("runHttpRequest方法内部异常,执行http请求异常。e=",e)
                     $.logErr(e, resp)
                 } finally {
-                    resolve();
+                    //将响应数据rdata作为方法返回值
+                    resolve(rdata);
                 }
             })
         })
