@@ -52,47 +52,49 @@ async function sign(){
     try{
         let body = `{"fp":"-1","shshshfp":"-1","shshshfpa":"-1","referUrl":"-1","userAgent":"-1","jda":"-1","rnVersion":"3.9"}`;
         let type = 'signBeanAct'
-        let requestInfo = await initGetRequest(type,body)
-        //执行http请求
-        if (requestInfo) {
-            return new Promise(async resolve => {
-                $.get(requestInfo, (err, resp, data) => {
-                    try {
-                        //处理响应结果
-                        let rdata = JSON.parse(data)
-                        if (rdata['code'] === '0' && rdata['data']) {
-                            //签到请求成功
-                            console.log(`${rdata['data']['dailyAward']['title']}\n`);
-                        } else {
-                            console.log("响应code不为0,签到失败。请求响应结果data：\n",rdata)
-                        }
-                    } catch (e) {
-                        console.log("执行http请求异常。e=",e)
-                        $.logErr(e, resp)
-                    } finally {
-                        resolve();
-                    }
-                })
-            })
+        let url = `https://api.m.jd.com/client.action?functionId=${type}&body=${body}&appid=ld&client=apple&clientVersion=${clientVersion}&networkType=wifi&uuid=${UUID}&openudid=${UUID}`;
+        let headers = {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "zh-cn",
+            'Cookie': $.cookie,
+            "Referer": "https://h5.m.jd.com/",
+            "User-Agent": USER_AGENT,
+        }
+        //调签到接口
+        let rdata = await runHttpRequest(url,"GET",headers)
+        if (rdata['code'] === '0' && rdata['data']) {
+            //签到请求成功
+            console.log(`${rdata['data']['dailyAward']['title']}\n`);
+        } else {
+            console.log("响应code不为0,签到失败。请求响应结果data：\n",rdata)
         }
     }catch (e) {
         console.log("sign签到方法内部发生异常，e = ",e)
     }
 }
 
-//创建http请求
-async function initGetRequest(type, body) {
-    let url = `https://api.m.jd.com/client.action?functionId=${type}&body=${body}&appid=ld&client=apple&clientVersion=${clientVersion}&networkType=wifi&uuid=${UUID}&openudid=${UUID}`;
-    const method = `GET`;
-    const headers = {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        'Cookie': $.cookie,
-        "Referer": "https://h5.m.jd.com/",
-        "User-Agent": USER_AGENT,
-    };
-    return {url: url, method: method, headers: headers};
+//调用http请求
+async function runHttpRequest(url,method,headers) {
+    //拼装http请求
+    let requestInfo = {url: url, method: method, headers: headers};
+    //执行http请求
+    if (requestInfo) {
+        return new Promise(async resolve => {
+            $.get(requestInfo, (err, resp, data) => {
+                try {
+                    //json解析响应数据并返回数据
+                    let rdata = JSON.parse(data)
+                    return rdata
+                } catch (e) {
+                    console.log("runHttpRequest方法内部异常,执行http请求异常。e=",e)
+                    $.logErr(e, resp)
+                } finally {
+                    resolve();
+                }
+            })
+        })
+    }
 }
 
 
