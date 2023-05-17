@@ -6,4 +6,6 @@ ql repo <repourl> <path> <blacklist> <dependence> <branch>
 
 拉库命令：ql repo https://github.com/suichentree/shu_script.git "jd_" "" "jdCookie.js|sendNotify.js|USER_AGENTS.js"
 
+其中jdCookie.js sendNotify.js USER_AGENTS.js是依赖文件
+
 参考了网上其他大神的脚本，按照自己的想法稍微修改了一下。
